@@ -2,6 +2,8 @@ package com.vobi.bank.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -46,6 +48,7 @@ class CustomerRepositoryIT {
 		customer.setEmail("mail@mail.com");
 		customer.setEnable("Y");
 		customer.setName("El nombre");
+		customer.setPhone("55555555555");
 		customer.setToken("54845241654548421321sadasdsadkjsad5");
 		
 		//Act
@@ -74,4 +77,22 @@ class CustomerRepositoryIT {
 	}
 
 
+	@Test
+	@Order(3)
+	void debeBorrarUnCustomer() {
+		//Arrange
+		Integer idCustomer=148365541;
+		Customer customer=null;
+		Optional<Customer> customerOptional=null;
+		
+		customer=customerRepository.findById(idCustomer).get();
+		
+		//Act
+		customerRepository.delete(customer);
+		customerOptional= customerRepository.findById(idCustomer);
+		
+		//Assert
+		
+		assertFalse(customerOptional.isPresent(),"No se pudo eliminar el customer");
+	}
 }

@@ -1,29 +1,31 @@
-package com.vobi.bank.repository;
+package com.vobi.bank.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.vobi.bank.domain.Customer;
 import com.vobi.bank.domain.DocumentType;
+import com.vobi.bank.repository.DocumentTypeRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
 @SpringBootTest
 @TestMethodOrder(OrderAnnotation.class)
 @Slf4j
-class CustomerRepositoryIT {
-
+public class CustomerServiceIT {
 	@Autowired
-	CustomerRepository customerRepository;
+	CustomerService customerService;
 	
 	@Autowired
 	DocumentTypeRepository documentTypeRepository;
@@ -31,13 +33,13 @@ class CustomerRepositoryIT {
 	@Test
 	@Order(1)
 	void debeValidarLasDependencias() {
-		assertNotNull(customerRepository);
+		assertNotNull(customerService);
 		assertNotNull(documentTypeRepository);
 	}
 	
 	@Test
 	@Order(2)
-	void debeCrearUnCustomer() {
+	void debeCrearUnCustomer() throws Exception {
 		//Arrange
 		Integer idDocumentType=1;
 		Integer idCustomer=148365541;
@@ -56,7 +58,7 @@ class CustomerRepositoryIT {
 		customer.setToken("54845241654548421321sadasdsadkjsad5");
 		
 		//Act
-		customer= customerRepository.save(customer);
+		customer= customerService.save(customer);
 		
 		//Assert
 		
@@ -65,15 +67,15 @@ class CustomerRepositoryIT {
 	
 	@Test
 	@Order(3)
-	void debeModificarUnCustomer() {
+	void debeModificarUnCustomer() throws Exception {
 		//Arrange
 		Integer idCustomer=148365541;
 		
-		Customer customer=customerRepository.findById(idCustomer).get();		
+		Customer customer=customerService.findById(idCustomer).get();		
 		customer.setEnable("N");
 		
 		//Act
-		customer= customerRepository.save(customer);
+		customer= customerService.update(customer);
 		
 		//Assert
 		
@@ -83,19 +85,19 @@ class CustomerRepositoryIT {
 
 	@Test
 	@Order(4)
-	void debeBorrarUnCustomer() {
+	void debeBorrarUnCustomer() throws Exception {
 		//Arrange
 		Integer idCustomer=148365541;
 		Customer customer=null;
 		Optional<Customer> customerOptional=null;
 		
-		assertTrue(customerRepository.findById(idCustomer).isPresent(),"Customer para eliminar no encontrado");
+		assertTrue(customerService.findById(idCustomer).isPresent(),"Customer para eliminar no encontrado");
 		
-		customer=customerRepository.findById(idCustomer).get();
+		customer=customerService.findById(idCustomer).get();
 		
 		//Act
-		customerRepository.delete(customer);
-		customerOptional= customerRepository.findById(idCustomer);
+		customerService.delete(customer);
+		customerOptional= customerService.findById(idCustomer);
 		
 		//Assert
 		
@@ -109,7 +111,7 @@ class CustomerRepositoryIT {
 		List<Customer> customers=null;
 		
 		//Act
-		customers=customerRepository.findAll();
+		customers=customerService.findAll();
 		customers.forEach(customer->log.info(customer.getName()));
 		//Assert
 		
